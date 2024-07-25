@@ -2,33 +2,45 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0"
   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+
   <modelVersion>4.0.0</modelVersion>
+  <artifactId>rspace-zenodo-adapter</artifactId>
+  <version>0.3.1</version>
+
   <parent>
     <artifactId>rspace-parent</artifactId>
     <groupId>com.github.rspace-os</groupId>
     <version>2.0.1</version>
   </parent>
-  <artifactId>rspace-zenodo-adapter</artifactId>
-  <version>0.3.0</version>
+
   <repositories>
     <repository>
       <id>jitpack.io</id>
       <url>https://jitpack.io</url>
     </repository>
   </repositories>
+
   <build>
     <plugins>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-surefire-plugin</artifactId>
       </plugin>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-toolchains-plugin</artifactId>
-      </plugin>
     </plugins>
   </build>
+
   <dependencies>
+    <dependency>
+      <groupId>com.github.rspace-os</groupId>
+      <artifactId>rspace-repository-spi</artifactId>
+      <version>1.0.1</version>
+    </dependency>
+    <dependency>
+      <groupId>com.github.rspace-os</groupId>
+      <artifactId>zenodo-java-client</artifactId>
+      <version>0.1.0</version>
+    </dependency>
+
     <dependency>
       <groupId>org.springframework</groupId>
       <artifactId>spring-test</artifactId>
@@ -93,15 +105,6 @@
       <groupId>org.assertj</groupId>
       <artifactId>assertj-core</artifactId>
     </dependency>
-    <dependency>
-      <groupId>com.github.rspace-os</groupId>
-      <artifactId>repository-spi</artifactId>
-      <version>0.9.0</version>
-    </dependency>
-    <dependency>
-      <groupId>com.github.rspace-os</groupId>
-      <artifactId>zenodo-java-client</artifactId>
-      <version>0.1.0</version>
-    </dependency>
   </dependencies>
+
 </project>
