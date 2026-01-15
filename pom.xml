@@ -5,12 +5,12 @@
 
   <modelVersion>4.0.0</modelVersion>
   <artifactId>rspace-zenodo-adapter</artifactId>
-  <version>0.3.1</version>
+  <version>0.3.2</version>
 
   <parent>
     <artifactId>rspace-parent</artifactId>
     <groupId>com.github.rspace-os</groupId>
-    <version>2.0.1</version>
+    <version>2.1.3</version>
   </parent>
 
   <repositories>
@@ -33,12 +33,22 @@
     <dependency>
       <groupId>com.github.rspace-os</groupId>
       <artifactId>rspace-repository-spi</artifactId>
-      <version>1.0.1</version>
+      <version>1.1.1</version>
     </dependency>
     <dependency>
       <groupId>com.github.rspace-os</groupId>
       <artifactId>zenodo-java-client</artifactId>
       <version>0.1.0</version>
+      <exclusions>
+        <exclusion>
+          <groupId>commons-io</groupId>
+          <artifactId>commons-io</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.springframework</groupId>
+          <artifactId>spring-core</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
 
     <dependency>
