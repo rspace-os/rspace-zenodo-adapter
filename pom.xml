@@ -38,7 +38,7 @@
     <dependency>
       <groupId>com.github.rspace-os</groupId>
       <artifactId>zenodo-java-client</artifactId>
-      <version>2db32dc811</version>
+      <version>0.2.0</version>
     </dependency>
 
     <dependency>
