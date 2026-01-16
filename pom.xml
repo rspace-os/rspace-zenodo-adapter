@@ -5,7 +5,7 @@
 
   <modelVersion>4.0.0</modelVersion>
   <artifactId>rspace-zenodo-adapter</artifactId>
-  <version>0.3.2</version>
+  <version>0.3.3</version>
 
   <parent>
     <artifactId>rspace-parent</artifactId>
@@ -38,17 +38,7 @@
     <dependency>
       <groupId>com.github.rspace-os</groupId>
       <artifactId>zenodo-java-client</artifactId>
-      <version>0.1.0</version>
-      <exclusions>
-        <exclusion>
-          <groupId>commons-io</groupId>
-          <artifactId>commons-io</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>org.springframework</groupId>
-          <artifactId>spring-core</artifactId>
-        </exclusion>
-      </exclusions>
+      <version>0.2.0</version>
     </dependency>
 
     <dependency>
