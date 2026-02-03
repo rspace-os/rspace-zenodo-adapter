@@ -5,7 +5,7 @@
 
   <modelVersion>4.0.0</modelVersion>
   <artifactId>rspace-zenodo-adapter</artifactId>
-  <version>0.3.3</version>
+  <version>0.3.4</version>
 
   <parent>
     <artifactId>rspace-parent</artifactId>
@@ -33,12 +33,12 @@
     <dependency>
       <groupId>com.github.rspace-os</groupId>
       <artifactId>rspace-repository-spi</artifactId>
-      <version>1.1.1</version>
+      <version>1.1.2</version>
     </dependency>
     <dependency>
       <groupId>com.github.rspace-os</groupId>
       <artifactId>zenodo-java-client</artifactId>
-      <version>0.2.0</version>
+      <version>0.2.1</version>
     </dependency>
 
     <dependency>
@@ -106,5 +106,4 @@
       <artifactId>assertj-core</artifactId>
     </dependency>
   </dependencies>
-
 </project>
