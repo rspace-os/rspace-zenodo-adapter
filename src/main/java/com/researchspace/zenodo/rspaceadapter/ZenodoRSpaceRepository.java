@@ -52,17 +52,17 @@ public class ZenodoRSpaceRepository implements IRepository, RepositoryConfigurer
 
             ZenodoDeposition deposition = zenodoClient.createDeposition(submission);
             ZenodoFile depositedFile = zenodoClient.depositFile(deposition, file.getName(), file);
-            return new RepositoryOperationResult(true, "Export uploaded to Zenodo successfully.", deposition.getHtmlUrl());
+            return new RepositoryOperationResult(true, "Export uploaded to Zenodo successfully.", deposition.getHtmlUrl(), deposition.getDoiUrl());
 
         } catch (RestClientException e) {
             log.error("RestClientException occurred while submitting to Zenodo", e);
-            return new RepositoryOperationResult(false, "RestClientException occurred while submitting to Zenodo", null);
+            return new RepositoryOperationResult(false, "RestClientException occurred while submitting to Zenodo", null, null);
         } catch (MalformedURLException e) {
             log.error("MalformedURLException occurred while submitting to Zenodo", e);
-            return new RepositoryOperationResult(false, "MalformedURLException occurred while submitting to Zenodo", null);
+            return new RepositoryOperationResult(false, "MalformedURLException occurred while submitting to Zenodo", null, null);
         } catch (IOException e) {
             log.error("IOException occurred while submitting to Zenodo", e);
-            return new RepositoryOperationResult(false, "IOException occurred while submitting to Zenodo", null);
+            return new RepositoryOperationResult(false, "IOException occurred while submitting to Zenodo", null, null);
         }
     }
 
@@ -71,6 +71,7 @@ public class ZenodoRSpaceRepository implements IRepository, RepositoryConfigurer
             submissionMetadata.getTitle(),
             submissionMetadata.getDescription(),
             "other",
+            true,
             getDmpDois(submissionMetadata),
             getControlledVocabularyTerms(submissionMetadata)
         );
@@ -100,10 +101,10 @@ public class ZenodoRSpaceRepository implements IRepository, RepositoryConfigurer
     public RepositoryOperationResult testConnection() {
         try {
             zenodoClient.getDepositions();
-            return new RepositoryOperationResult(true, "Test connection OK!", null);
+            return new RepositoryOperationResult(true, "Test connection OK!", null, null);
         } catch (RestClientException | IOException e) {
             log.error("Couldn't perform test action {}", e.getMessage());
-            return new RepositoryOperationResult(false, "Test connection failed - " + e.getMessage(), null);
+            return new RepositoryOperationResult(false, "Test connection failed - " + e.getMessage(), null, null);
         }
     }
 

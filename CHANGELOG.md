@@ -1,6 +1,10 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 0.3.4
+- Adapting RepositoryOperationResult for Zenodo
+- switch to zenodo-java-client 0.2.1
+ 
 ## 0.3.3
 - switch to zenodo-java-client 0.2.0
 
