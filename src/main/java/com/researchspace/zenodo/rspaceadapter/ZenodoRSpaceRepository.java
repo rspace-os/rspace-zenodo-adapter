@@ -36,97 +36,117 @@ import org.springframework.web.client.RestClientException;
 @Slf4j
 public class ZenodoRSpaceRepository implements IRepository, RepositoryConfigurer {
 
-    private ZenodoClient zenodoClient;
+  private ZenodoClient zenodoClient;
+  protected final static String RAID_METADATA_PROPERTY = "raid";
 
 
-    @Override
-    public void configure(RepositoryConfig repositoryConfig) {
-        this.zenodoClient = new ZenodoClientImpl(repositoryConfig.getServerURL(), repositoryConfig.getIdentifier());
+  @Override
+  public void configure(RepositoryConfig repositoryConfig) {
+    this.zenodoClient = new ZenodoClientImpl(repositoryConfig.getServerURL(),
+        repositoryConfig.getIdentifier());
+  }
+
+  @Override
+  public RepositoryOperationResult submitDeposit(IDepositor iDepositor, File file,
+      SubmissionMetadata submissionMetadata, RepositoryConfig repositoryConfig) {
+    ZenodoSubmission submission = createZenodoSubmission(submissionMetadata);
+
+    try {
+
+      ZenodoDeposition deposition = zenodoClient.createDeposition(submission);
+      ZenodoFile depositedFile = zenodoClient.depositFile(deposition, file.getName(), file);
+      return new RepositoryOperationResult(true, "Export uploaded to Zenodo successfully.",
+          deposition.getHtmlUrl(), deposition.getDoiUrl());
+
+    } catch (RestClientException e) {
+      log.error("RestClientException occurred while submitting to Zenodo", e);
+      return new RepositoryOperationResult(false,
+          "RestClientException occurred while submitting to Zenodo", null, null);
+    } catch (MalformedURLException e) {
+      log.error("MalformedURLException occurred while submitting to Zenodo", e);
+      return new RepositoryOperationResult(false,
+          "MalformedURLException occurred while submitting to Zenodo", null, null);
+    } catch (IOException e) {
+      log.error("IOException occurred while submitting to Zenodo", e);
+      return new RepositoryOperationResult(false, "IOException occurred while submitting to Zenodo",
+          null, null);
     }
+  }
 
-    @Override
-    public RepositoryOperationResult submitDeposit(IDepositor iDepositor, File file, SubmissionMetadata submissionMetadata, RepositoryConfig repositoryConfig) {
-        ZenodoSubmission submission = createZenodoSubmission(submissionMetadata);
+  private ZenodoSubmission createZenodoSubmission(SubmissionMetadata submissionMetadata) {
+    return new ZenodoSubmission(
+        submissionMetadata.getTitle(),
+        submissionMetadata.getDescription(),
+        "other",
+        true,
+        getRelatedIdentifiers(submissionMetadata),
+        getControlledVocabularyTerms(submissionMetadata)
+    );
+  }
 
-        try {
-
-            ZenodoDeposition deposition = zenodoClient.createDeposition(submission);
-            ZenodoFile depositedFile = zenodoClient.depositFile(deposition, file.getName(), file);
-            return new RepositoryOperationResult(true, "Export uploaded to Zenodo successfully.", deposition.getHtmlUrl(), deposition.getDoiUrl());
-
-        } catch (RestClientException e) {
-            log.error("RestClientException occurred while submitting to Zenodo", e);
-            return new RepositoryOperationResult(false, "RestClientException occurred while submitting to Zenodo", null, null);
-        } catch (MalformedURLException e) {
-            log.error("MalformedURLException occurred while submitting to Zenodo", e);
-            return new RepositoryOperationResult(false, "MalformedURLException occurred while submitting to Zenodo", null, null);
-        } catch (IOException e) {
-            log.error("IOException occurred while submitting to Zenodo", e);
-            return new RepositoryOperationResult(false, "IOException occurred while submitting to Zenodo", null, null);
-        }
+  private List<com.researchspace.zenodo.model.ControlledVocabularyTerm> getControlledVocabularyTerms(
+      SubmissionMetadata submissionMetadata) {
+    var terms = new ArrayList();
+    for (com.researchspace.repository.spi.ControlledVocabularyTerm term : submissionMetadata.getTerms()) {
+      terms.add(new com.researchspace.zenodo.model.ControlledVocabularyTerm(term.getValue(),
+          term.getUri(), "url"));
     }
+    return terms;
+  }
 
-    private ZenodoSubmission createZenodoSubmission(SubmissionMetadata submissionMetadata) {
-        return new ZenodoSubmission(
-            submissionMetadata.getTitle(),
-            submissionMetadata.getDescription(),
-            "other",
-            true,
-            getDmpDois(submissionMetadata),
-            getControlledVocabularyTerms(submissionMetadata)
-        );
-    }
-
-    private List<com.researchspace.zenodo.model.ControlledVocabularyTerm> getControlledVocabularyTerms(SubmissionMetadata submissionMetadata) {
-      var terms = new ArrayList();
-      for(com.researchspace.repository.spi.ControlledVocabularyTerm term : submissionMetadata.getTerms()) {
-        terms.add(new com.researchspace.zenodo.model.ControlledVocabularyTerm(term.getValue(), term.getUri(), "url"));
-      }
-      return terms;
-    }
-
-    private List<RelatedIdentifier> getDmpDois(SubmissionMetadata submissionMetadata) {
-      List<RelatedIdentifier> dmpDois = new ArrayList<>();
-      if(submissionMetadata.getDmpDoi().isPresent()) {
-        dmpDois.add(new RelatedIdentifier(
+  private List<RelatedIdentifier> getRelatedIdentifiers(SubmissionMetadata submissionMetadata) {
+    List<RelatedIdentifier> relatedIdentifiers = new ArrayList<>();
+    // add related DmpDoi
+    if (submissionMetadata.getDmpDoi().isPresent()) {
+      relatedIdentifiers.add(new RelatedIdentifier(
           submissionMetadata.getDmpDoi().get(),
           "isDocumentedBy",
           "publication-datamanagementplan"
-        ));
-      }
-      return dmpDois;
+      ));
     }
+    // add related RAiD
+    if (submissionMetadata.getOtherProperties() != null &&
+        submissionMetadata.getOtherProperties().containsKey(RAID_METADATA_PROPERTY)) {
+      relatedIdentifiers.add(new RelatedIdentifier(
+          submissionMetadata.getOtherProperties().get(RAID_METADATA_PROPERTY),
+          "isPartOf",
+          "other"
+      ));
+    }
+    return relatedIdentifiers;
+  }
 
-    @Override
-    public RepositoryOperationResult testConnection() {
-        try {
-            zenodoClient.getDepositions();
-            return new RepositoryOperationResult(true, "Test connection OK!", null, null);
-        } catch (RestClientException | IOException e) {
-            log.error("Couldn't perform test action {}", e.getMessage());
-            return new RepositoryOperationResult(false, "Test connection failed - " + e.getMessage(), null, null);
-        }
+  @Override
+  public RepositoryOperationResult testConnection() {
+    try {
+      zenodoClient.getDepositions();
+      return new RepositoryOperationResult(true, "Test connection OK!", null, null);
+    } catch (RestClientException | IOException e) {
+      log.error("Couldn't perform test action {}", e.getMessage());
+      return new RepositoryOperationResult(false, "Test connection failed - " + e.getMessage(),
+          null, null);
     }
+  }
 
-    @Override
-    public RepositoryConfigurer getConfigurer() {
-        return this;
-    }
+  @Override
+  public RepositoryConfigurer getConfigurer() {
+    return this;
+  }
 
-    @Override
-    public List<Subject> getSubjects() {
-        return ZenodoRSpaceAdapterUtils.getZenodoSubjects();
-    }
+  @Override
+  public List<Subject> getSubjects() {
+    return ZenodoRSpaceAdapterUtils.getZenodoSubjects();
+  }
 
-    @SneakyThrows
-    @Override
-    public LicenseConfigInfo getLicenseConfigInfo() {
-        return new LicenseConfigInfo(true, false, ZenodoRSpaceAdapterUtils.getZenodoLicenses());
-    }
+  @SneakyThrows
+  @Override
+  public LicenseConfigInfo getLicenseConfigInfo() {
+    return new LicenseConfigInfo(true, false, ZenodoRSpaceAdapterUtils.getZenodoLicenses());
+  }
 
-    @Override
-    public Map<String, RepoProperty> getOtherProperties() {
-        return new HashMap<>();
-    }
+  @Override
+  public Map<String, RepoProperty> getOtherProperties() {
+    return new HashMap<>();
+  }
 }
 

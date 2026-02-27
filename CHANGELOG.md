@@ -1,7 +1,11 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
-## 0.3.4
+## 0.3.5
+- Adding RAiD reference as RelatedIdentifier into submission metadata
+- switch to zenodo-java-client 0.2.2
+
+- ## 0.3.4
 - Adapting RepositoryOperationResult for Zenodo
 - switch to zenodo-java-client 0.2.1
  
