@@ -10,7 +10,7 @@
   <parent>
     <artifactId>rspace-parent</artifactId>
     <groupId>com.github.rspace-os</groupId>
-    <version>3.0.0</version>
+    <version>rsdev-444-upgrade-to-spring-6-SNAPSHOT</version>
   </parent>
 
   <repositories>
@@ -33,12 +33,12 @@
     <dependency>
       <groupId>com.github.rspace-os</groupId>
       <artifactId>rspace-repository-spi</artifactId>
-      <version>2.0.0</version>
+      <version>rsdev-444-upgrade-to-spring-6-SNAPSHOT</version>
     </dependency>
     <dependency>
       <groupId>com.github.rspace-os</groupId>
       <artifactId>zenodo-java-client</artifactId>
-      <version>1.0.0</version>
+      <version>rsdev-444-upgrade-to-spring-6-SNAPSHOT</version>
     </dependency>
 
     <dependency>
