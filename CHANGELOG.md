@@ -1,7 +1,7 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
-## 1.0.0 2026-04-29
+## 1.0.0 2026-07-28
 - Spring 6 / Jakarta namespace migration
 - Switch to rspace-parent 3.0.0
 
